@@ -45,6 +45,11 @@ class ExternalTab extends JPanel implements PrefsTab {
     private final TextField adobeAcrobatReaderPath;
     private final TextField sumatraReaderPath;
     private final GridPane builder = new GridPane();
+    RadioButton defaultFileBrowser = new RadioButton(Localization.lang("Use default file browser"));
+    TextField commandText = new TextField();
+    RadioButton executeFileBrowser = new RadioButton(Localization.lang("Execute Command"));
+    Button selectFileBrowserButton = new Button(Localization.lang("Browser"));
+
 
     public ExternalTab(JabRefFrame frame, PreferencesDialog prefsDiag, JabRefPreferences prefs) {
         this.prefs = prefs;
@@ -85,6 +90,30 @@ class ExternalTab extends JPanel implements PrefsTab {
         pdfOptionPanel.add(adobeAcrobatReaderPath,  2, 1);
         adobeAcrobatReader.setToggleGroup(pdfReaderGroup);
         pdfOptionPanel.add(browseAdobeAcrobatReader,  3, 1);
+
+        /** chnage **/
+        GridPane fileBrowserPanel = new GridPane();
+        final ToggleGroup fileBrowserGroup = new ToggleGroup();
+        executeFileBrowser.setToggleGroup(fileBrowserGroup);
+        defaultFileBrowser.setToggleGroup(fileBrowserGroup);
+
+        //actions
+        selectFileBrowserButton.setOnAction( e -> showFileBrowserChooser());
+        defaultFileBrowser.setOnAction(e -> updateDefautFileBrowserButtonAndFieldEnabledState());
+        executeFileBrowser.setOnAction(e -> updateDefautFileBrowserButtonAndFieldEnabledState());
+
+        fileBrowserPanel.add(defaultFileBrowser,  1, 1);
+        fileBrowserPanel.add(executeFileBrowser,  1, 2);
+        fileBrowserPanel.add(commandText,  2, 2);
+        fileBrowserPanel.add(selectFileBrowserButton,  3, 2);
+
+        Label fileBrowserDescription = new Label(Localization.lang("Note: Use the placeholder %0 for the location of the opened library file.", "%DIR"));
+        fileBrowserPanel.add(fileBrowserDescription,  2, 3);
+
+
+        //fileBrowserPanel.add(commandText, 1, 1);
+
+        //fileBrowserPanel.add(selectFileBrowserButton, 2, 1);
 
         if (OS.WINDOWS) {
             browseSumatraReader.setOnAction(e -> showSumatraChooser());
@@ -135,6 +164,13 @@ class ExternalTab extends JPanel implements PrefsTab {
         builder.add(openPdf,  1, 12);
 
         builder.add(pdfOptionPanel, 1, 13);
+
+        Label openFileBrowser = new Label(Localization.lang("Open File Browser"));
+        openFileBrowser.getStyleClass().add("sectionHeader");
+        builder.add(openFileBrowser,  1, 14);
+
+        builder.add(fileBrowserPanel, 1, 15);
+
         JFXPanel panel = CustomJFXPanel.wrap(new Scene(builder));
         setLayout(new BorderLayout());
         add(panel, BorderLayout.CENTER);
@@ -167,6 +203,9 @@ class ExternalTab extends JPanel implements PrefsTab {
         defaultConsole.setSelected(Globals.prefs.getBoolean(JabRefPreferences.USE_DEFAULT_CONSOLE_APPLICATION));
         executeConsole.setSelected(!Globals.prefs.getBoolean(JabRefPreferences.USE_DEFAULT_CONSOLE_APPLICATION));
 
+        defaultFileBrowser.setSelected(true); //change
+        commandText.setText(Globals.prefs.get(JabRefPreferences.FILE_BROWSER));
+
         consoleCommand.setText(Globals.prefs.get(JabRefPreferences.CONSOLE_COMMAND));
 
         adobeAcrobatReaderPath.setText(Globals.prefs.get(JabRefPreferences.ADOBE_ACROBAT_COMMAND));
@@ -181,6 +220,7 @@ class ExternalTab extends JPanel implements PrefsTab {
         }
 
         updateExecuteConsoleButtonAndFieldEnabledState();
+        updateDefautFileBrowserButtonAndFieldEnabledState(); //change
     }
 
     @Override
@@ -191,6 +231,10 @@ class ExternalTab extends JPanel implements PrefsTab {
         prefs.putBoolean(JabRefPreferences.USE_DEFAULT_CONSOLE_APPLICATION, defaultConsole.isSelected());
         prefs.put(JabRefPreferences.CONSOLE_COMMAND, consoleCommand.getText());
         prefs.put(JabRefPreferences.ADOBE_ACROBAT_COMMAND, adobeAcrobatReaderPath.getText());
+
+        //change
+        prefs.putBoolean(JabRefPreferences.USE_DEFAULT_FILE_BROWSER_APPLICATION, defaultFileBrowser.isSelected());
+        prefs.put(JabRefPreferences.FILE_BROWSER, commandText.getText());//change
         if (OS.WINDOWS) {
             prefs.put(JabRefPreferences.SUMATRA_PDF_COMMAND, sumatraReaderPath.getText());
         }
@@ -212,11 +256,24 @@ class ExternalTab extends JPanel implements PrefsTab {
         consoleCommand.setDisable(!executeConsole.isSelected());
     }
 
+    private void updateDefautFileBrowserButtonAndFieldEnabledState() { //change
+        selectFileBrowserButton.setDisable(!executeFileBrowser.isSelected());
+        commandText.setDisable(!executeFileBrowser.isSelected());
+    }
+
     private void showConsoleChooser() {
         JFileChooser consoleChooser = new JFileChooser();
         int answer = consoleChooser.showOpenDialog(ExternalTab.this);
         if (answer == JFileChooser.APPROVE_OPTION) {
             consoleCommand.setText(consoleChooser.getSelectedFile().getAbsolutePath());
+        }
+    }
+
+    private void showFileBrowserChooser() { //change
+        JFileChooser consoleChooser = new JFileChooser();
+        int answer = consoleChooser.showOpenDialog(ExternalTab.this);
+        if (answer == JFileChooser.APPROVE_OPTION) {
+            commandText.setText(consoleChooser.getSelectedFile().getAbsolutePath());
         }
     }
 

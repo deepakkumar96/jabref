@@ -41,6 +41,8 @@ import org.fxmisc.easybind.EasyBind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+
 /**
  * Preferences dialog. Contains a TabbedPane, and tabs will be defined in separate classes. Tabs MUST implement the
  * PrefsTab interface, since this dialog will call the storeSettings() method of all tabs when the user presses ok.
@@ -218,6 +220,11 @@ public class PreferencesDialog extends BaseDialog<Void> {
         GUIGlobals.updateEntryEditorColors();
         frame.setupAllTables();
         frame.output(Localization.lang("Preferences recorded."));
+
+        //change
+        JOptionPane.showMessageDialog(null, Globals.prefs.get(JabRefPreferences.USE_DEFAULT_FILE_BROWSER_APPLICATION));
+        JOptionPane.showMessageDialog(null, Globals.prefs.get(JabRefPreferences.FILE_BROWSER));
+
     }
 
     public void setValues() {

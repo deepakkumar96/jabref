@@ -251,6 +251,8 @@ public class JabRefPreferences implements PreferencesService {
     public static final String ADOBE_ACROBAT_COMMAND = "adobeAcrobatCommand";
     public static final String SUMATRA_PDF_COMMAND = "sumatraCommand";
     public static final String USE_PDF_READER = "usePDFReader";
+    public static final String USE_DEFAULT_FILE_BROWSER_APPLICATION = "useDefaultFileBrowserApplication"; //change
+    public static final String FILE_BROWSER = "fileBrowser"; //change
     // Currently, it is not possible to specify defaults for specific entry types
     // When this should be made possible, the code to inspect is org.jabref.gui.preferences.BibtexKeyPatternPrefTab.storeSettings() -> LabelPattern keypatterns = getCiteKeyPattern(); etc
     public static final String DEFAULT_BIBTEX_KEY_PATTERN = "defaultBibtexKeyPattern";

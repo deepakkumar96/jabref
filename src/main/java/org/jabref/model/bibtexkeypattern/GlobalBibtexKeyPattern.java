@@ -1,7 +1,6 @@
 package org.jabref.model.bibtexkeypattern;
 
 import java.util.List;
-
 public class GlobalBibtexKeyPattern extends AbstractBibtexKeyPattern {
 
     private List<String> defaultBibtexKeyPattern;
